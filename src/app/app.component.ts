@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {WebAuthnService} from './services/web-authn/web-authn.service';
+import {ServerResp} from './interfaces';
+import {decodeCreationOptionsJSON} from './utils/utils';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +46,29 @@ export class AppComponent implements OnInit {
     this.isAuthnSupported = await this.isPlatformAuthenticatorSupported();
   }
 
-  registration() {
-    this.webAuthService.startRegistration(this.registrationForm.value);
+  async registration() {
+    const userData = this.registrationForm.value;
+    this.webAuthService.startRegistration(userData)
+      .then((res: ServerResp) => {
+        if (res.status !== 'ok') {
+          throw new Error(`Error requesting user: ${res.errorMessage}`);
+        }
+
+        return this.webAuthService.createCredentials(userData);
+      })
+      .then((publicKeyCredential) =>
+        navigator.credentials.create({publicKey: decodeCreationOptionsJSON(publicKeyCredential)}))
+      .then((credential) => {
+        if (!credential) {
+          throw new Error('navigator.credentials.create');
+        }
+        return this.webAuthService.credentialResponse(credential, userData);
+      })
+      .then((serverResponse) => {
+        if (serverResponse.status !== 'ok') {
+          throw new Error('Error registering user! (Server)');
+        }
+        alert('Success!')
+      });
   }
 }
