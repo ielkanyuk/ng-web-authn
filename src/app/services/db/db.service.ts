@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserData } from '../../interfaces/UserData';
-import {InMemmoryUser} from "../../interfaces/InMemmoryUser";
+import { UserData, InMemmoryUser } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'

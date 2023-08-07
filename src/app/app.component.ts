@@ -1,4 +1,6 @@
 import {Component, OnInit} from '@angular/core';
+import {FormControl, FormGroup} from '@angular/forms';
+import {WebAuthnService} from './services/web-authn/web-authn.service';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +9,16 @@ import {Component, OnInit} from '@angular/core';
 })
 export class AppComponent implements OnInit {
   isAuthnSupported = false;
+
+  registrationForm = new FormGroup({
+    username: new FormControl(),
+    email: new FormControl(),
+  });
+
+  constructor(
+    private webAuthService: WebAuthnService,
+  ) {
+  }
 
   ngOnInit(): void {
     this.checkSupportAuthn();
@@ -30,5 +42,9 @@ export class AppComponent implements OnInit {
 
   async checkSupportAuthn() {
     this.isAuthnSupported = await this.isPlatformAuthenticatorSupported();
+  }
+
+  registration() {
+    this.webAuthService.startRegistration(this.registrationForm.value);
   }
 }
