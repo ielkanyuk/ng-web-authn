@@ -315,6 +315,9 @@
   </div>
 
   <h2>Registration</h2>
+  <div class="terminal">
+    <pre>navigator.credentials.create();</pre>
+  </div>
   <div class="card-container">
     <div [formGroup]="registrationForm">
       <div>Username: <input formControlName="username" placeholder="Enter username" /></div>
@@ -324,9 +327,9 @@
   </div>
 
   <h2>Login</h2>
-
-  <input type="hidden" #selection>
-
+  <div class="terminal">
+    <pre>navigator.credentials.get();</pre>
+  </div>
   <div class="card-container">
     <div [formGroup]="loginForm">
       <div>Username: <input formControlName="username" placeholder="Enter username" /></div>
@@ -334,19 +337,8 @@
     </div>
   </div>
 
-  <!-- Terminal -->
-<!--  <div class="terminal" [ngSwitch]="selection.value">-->
-<!--      <pre *ngSwitchDefault>ng generate component xyz</pre>-->
-<!--      <pre *ngSwitchCase="'material'">ng add @angular/material</pre>-->
-<!--      <pre *ngSwitchCase="'pwa'">ng add @angular/pwa</pre>-->
-<!--      <pre *ngSwitchCase="'dependency'">ng add _____</pre>-->
-<!--      <pre *ngSwitchCase="'test'">ng test</pre>-->
-<!--      <pre *ngSwitchCase="'build'">ng build</pre>-->
-<!--  </div>-->
-
-  <footer>
-      <img src="./assets/img/webauth.github.png" width="150px" />
-  </footer>
+  <h2>Code example</h2>
+  <div><img src="./assets/img/webauth.github.png" width="150px" /></div>
 
   <svg id="clouds" xmlns="http://www.w3.org/2000/svg" width="2611.084" height="485.677" viewBox="0 0 2611.084 485.677">
     <title>Gray Clouds Background</title>
