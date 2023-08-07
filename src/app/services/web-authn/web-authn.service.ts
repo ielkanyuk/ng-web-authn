@@ -45,7 +45,7 @@ export class WebAuthnService {
       ],
       excludeCredentials: [],
       authenticatorSelection: {
-
+        requireResidentKey: true,
       }
     }
 
@@ -59,6 +59,39 @@ export class WebAuthnService {
     user.credentials.push(credential.id);
 
     this.db.updateUser(userData.username, user);
+
+    return Promise.resolve({status: 'ok'});
+  }
+
+  getAssertationChallenge(userData?: UserData) {
+    let publicKey;
+
+    if (userData) {
+      const user = this.db.getUser(userData.username);
+      const allowCredentials = user.credentials.map((id) => ({type: 'public-key', id}));
+      publicKey = {
+        challenge: encode(getRandomBuffer()),
+        allowCredentials,
+        status: 'ok',
+        userVerification: 'required',
+      };
+    } else {
+      publicKey = {
+        challenge: encode(getRandomBuffer()),
+        status: 'ok',
+        userVerification: 'required',
+        authenticatorSelection: {
+          requireResidentKey: true,
+        }
+      };
+    }
+    return Promise.resolve(publicKey);
+  }
+
+  getAssertationResponse(response: any): Promise<ServerResp> {
+    if (!this.db.getUserByUserHandle(response.userHandle)) {
+      return Promise.reject({status: 'failed', errorMessage: 'Access denied!'});
+    }
 
     return Promise.resolve({status: 'ok'});
   }

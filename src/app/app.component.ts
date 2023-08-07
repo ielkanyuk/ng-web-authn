@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {WebAuthnService} from './services/web-authn/web-authn.service';
 import {ServerResp} from './interfaces';
-import {decodeCreationOptionsJSON} from './utils/utils';
+import {decodeCreationOptionsJSON, decodeAssertReq} from './utils/utils';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +15,10 @@ export class AppComponent implements OnInit {
   registrationForm = new FormGroup({
     username: new FormControl(),
     email: new FormControl(),
+  });
+
+  loginForm = new FormGroup({
+    username: new FormControl(),
   });
 
   constructor(
@@ -68,7 +72,27 @@ export class AppComponent implements OnInit {
         if (serverResponse.status !== 'ok') {
           throw new Error('Error registering user! (Server)');
         }
-        alert('Success!')
+        alert('Registration complete!')
+      });
+  }
+
+  login() {
+    const userData = this.loginForm.value;
+    this.webAuthService.getAssertationChallenge(userData)
+      .then((assertionChallenge) =>
+        navigator.credentials.get({publicKey: decodeAssertReq(assertionChallenge.challenge)})
+      )
+      .then((credential) => {
+        if (!credential) {
+          throw new Error('navigator.credentials.get');
+        }
+        return this.webAuthService.getAssertationResponse(credential);
+      })
+      .then((serverResponse) => {
+        if (serverResponse.status !== 'ok') {
+          throw new Error('Error login user! (Server)');
+        }
+        alert('You logged in!')
       });
   }
 }

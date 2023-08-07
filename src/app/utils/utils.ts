@@ -1,6 +1,8 @@
 import * as randombytes from 'randombytes';
-import {PublicKeyCredentialCreationOptionsJSON} from '@simplewebauthn/typescript-types';
-import {decode} from "base64-arraybuffer";
+import {
+  PublicKeyCredentialCreationOptionsJSON,
+} from '@simplewebauthn/typescript-types';
+import {decode} from 'base64-arraybuffer';
 
 export function getRandomBuffer(): ArrayBuffer {
   return toArrayBuffer(randombytes(32));
@@ -28,4 +30,11 @@ export function decodeCreationOptionsJSON(res: PublicKeyCredentialCreationOption
   const newPublicOption = {...res, ...decodeValues};
 
   return newPublicOption as PublicKeyCredentialCreationOptions;
+}
+
+export function decodeAssertReq(challenge: any): PublicKeyCredentialRequestOptions {
+  return {
+    challenge: decode(challenge),
+    userVerification: 'required',
+  }
 }
